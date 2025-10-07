@@ -1,17 +1,17 @@
-
-import Logo from "@/assets/icons/Logo"
-import { Button } from "@/components/ui/button"
+import Logo from "@/assets/icons/Logo";
+import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-} from "@/components/ui/navigation-menu"
+} from "@/components/ui/navigation-menu";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
+} from "@/components/ui/popover";
+import { ModeToggle } from "./ModeToggler";
 
 // Navigation links array to be used in both desktop and mobile menus
 const navigationLinks = [
@@ -19,12 +19,12 @@ const navigationLinks = [
   { href: "#", label: "Features" },
   { href: "#", label: "Pricing" },
   { href: "#", label: "About" },
-]
+];
 
 export default function Navbar() {
   return (
     <header className="border-b">
-      <div className=" container mx-auto px-4 flex h-16 items-center justify-between gap-4">
+      <div className="container mx-auto px-4 flex h-16 items-center justify-between gap-4">
         {/* Left side */}
         <div className="flex items-center gap-2">
           {/* Mobile menu trigger */}
@@ -105,6 +105,7 @@ export default function Navbar() {
         </div>
         {/* Right side */}
         <div className="flex items-center gap-2">
+          <ModeToggle/>
           <Button asChild variant="ghost" size="sm" className="text-sm">
             <a href="#">Sign In</a>
           </Button>
@@ -114,5 +115,5 @@ export default function Navbar() {
         </div>
       </div>
     </header>
-  )
+  );
 }
