@@ -1,12 +1,10 @@
 import App from "@/App";
-import AdminLayout from "@/components/Layout/AdminLayout";
 import About from "@/pages/About";
-import Analytics from "@/pages/Analytics";
 import { createBrowserRouter } from "react-router";
+
 
 export const router = createBrowserRouter([
   {
-    // element: <App>,
     Component: App,
     path: "/",
     children: [
@@ -15,25 +13,5 @@ export const router = createBrowserRouter([
         path: "about",
       },
     ],
-  },  
-  {
-    Component: AdminLayout,
-    path: "/admin",
-    children: [
-      {
-        Component: Analytics,
-        path: "analytics",
-      },
-    ],
   },
-  {
-    Component: AdminLayout,
-    path: "/admin",
-    children: [
-      {
-        Component: Analytics,
-        path: "analytics",
-      },
-    ],
-  }
 ]);
