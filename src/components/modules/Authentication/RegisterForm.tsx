@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 import { Link } from "react-router";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Password from "@/components/ui/Password";
 
 const registerSchema = z.object({
   name: z.string().min(2).max(50),
@@ -22,6 +23,10 @@ const registerSchema = z.object({
   confirmPassword: z
     .string()
     .min(8, { error: "Confirm Password is too short" }),
+})
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Password do not match",
+    path: ["confirmPassword"],
 });
 
 export function RegisterForm({
@@ -98,12 +103,12 @@ export function RegisterForm({
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    {/* <Password {...field} /> */}
-                    <Input
+                    <Password {...field} />
+                    {/* <Input
                       placeholder="********"
                       type="password"
                       {...field}
-                    />
+                    /> */}
                   </FormControl>
                   <FormDescription className="sr-only">
                     This is your public display name.
@@ -119,12 +124,12 @@ export function RegisterForm({
                 <FormItem>
                   <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
-                    {/* <Password {...field} /> */}
-                    <Input
+                    <Password {...field} />
+                    {/* <Input
                       placeholder="********"
                       type="password"
                       {...field}
-                    />
+                    /> */}
                   </FormControl>
                   <FormDescription className="sr-only">
                     This is your public display name.
