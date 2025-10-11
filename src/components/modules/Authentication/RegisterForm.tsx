@@ -12,9 +12,15 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router";
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
 
 
 
+
+const formSchema = z.object({
+  name: z.string().min(2).max(50),
+})
 
 
 export function RegisterForm({
@@ -22,11 +28,16 @@ export function RegisterForm({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
 
-  const form = useForm();
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+    },
+  });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const onSubmit = (data: any) => {
+const onSubmit = (data : z.infer<typeof formSchema>) => {
       console.log("Onsubmit", data);
+      console.log("Onsubmit", data.name);
 };
 
   return (
@@ -43,7 +54,7 @@ export function RegisterForm({
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               control={form.control}
-              name="userenamee"
+              name="name"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Name</FormLabel>
