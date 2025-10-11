@@ -1,44 +1,47 @@
 import { Button } from "@/components/ui/button";
 import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router";
-import { z } from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-
-
-
-const formSchema = z.object({
+const registerSchema = z.object({
   name: z.string().min(2).max(50),
-})
-
+  email: z.email(),
+  password: z.string().min(8, { error: "Password is too short" }),
+  confirmPassword: z
+    .string()
+    .min(8, { error: "Confirm Password is too short" }),
+});
 
 export function RegisterForm({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
     },
   });
 
-const onSubmit = (data : z.infer<typeof formSchema>) => {
-      console.log("Onsubmit", data);
-      console.log("Onsubmit", data.name);
-};
+  const onSubmit = (data: z.infer<typeof registerSchema>) => {
+    console.log("Onsubmit", data);
+    console.log("Onsubmit", data.name);
+  };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -60,6 +63,68 @@ const onSubmit = (data : z.infer<typeof formSchema>) => {
                   <FormLabel>Name</FormLabel>
                   <FormControl>
                     <Input placeholder="John Doe" {...field} />
+                  </FormControl>
+                  <FormDescription className="sr-only">
+                    This is your public display name.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="john.doe@company.com"
+                      type="email"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription className="sr-only">
+                    This is your public display name.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    {/* <Password {...field} /> */}
+                    <Input
+                      placeholder="********"
+                      type="password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription className="sr-only">
+                    This is your public display name.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirm Password</FormLabel>
+                  <FormControl>
+                    {/* <Password {...field} /> */}
+                    <Input
+                      placeholder="********"
+                      type="password"
+                      {...field}
+                    />
                   </FormControl>
                   <FormDescription className="sr-only">
                     This is your public display name.
