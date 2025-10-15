@@ -255,8 +255,8 @@ export function RegisterForm({
     };
 
     try {
-      await register(userInfo).unwrap();
-
+      const result = await register(userInfo).unwrap();
+      console.log(result)
       toast.success("User created successfully");
       navigate("/verify");
     } catch (error) {
