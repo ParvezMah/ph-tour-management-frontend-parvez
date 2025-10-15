@@ -15,7 +15,7 @@ const authApi = baseApi.injectEndpoints({
         return {
           url: "/user/register",
           method: "POST",
-          body: userInfo,
+          data: userInfo,
         };
       },
     }),
