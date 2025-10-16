@@ -5,7 +5,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -25,9 +25,13 @@ export function LoginForm({
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     try {
       const res = await login(data).unwrap();
-      console.log(res);
+      console.log("Onsubmit res : ", res);
     } catch (err) {
-      console.error(err);
+      console.error("Onsubmit err : ", err);
+
+      if (err.data.message === "Password does not match") {
+        toast.error("Invalid credentials");
+      }
 
       if (err.status === 401) {
         toast.error("Your account is not verified");
@@ -60,6 +64,7 @@ export function LoginForm({
                       value={field.value || ""}
                     />
                   </FormControl>
+
                   <FormMessage />
                 </FormItem>
               )}

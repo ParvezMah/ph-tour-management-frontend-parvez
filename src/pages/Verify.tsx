@@ -8,7 +8,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
+  Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -19,12 +21,15 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { useSendOtpMutation, useVerifyOtpMutation } from "@/redux/features/auth.api";
+import {
+  useSendOtpMutation,
+  useVerifyOtpMutation,
+} from "@/redux/features/auth.api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dot } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Form, useLocation, useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { toast } from "sonner";
 import z from "zod";
 
@@ -42,9 +47,7 @@ export default function Verify() {
   const [confirmed, setConfirmed] = useState(false);
   const [sendOtp] = useSendOtpMutation();
   const [verifyOtp] = useVerifyOtpMutation();
-
-
-
+    const [timer, setTimer] = useState(120);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -53,17 +56,19 @@ export default function Verify() {
     },
   });
 
-  const handleConfirm = async() => {
-    const toastId = toast.loading("Sending OTP...");
-    try {
-      const res = await sendOtp({ email: email }).unwrap();
-      if(res.success){
-        toast.success("OTP Sent Successfully", {id: toastId})
-      }
-      setConfirmed(true);
-    } catch (error) {
-      console.log(error)
-    }
+  const handleConfirm = async () => {
+    // const toastId = toast.loading("Sending OTP...");
+    setConfirmed(true);
+
+    // try {
+    //   const res = await sendOtp({ email: email }).unwrap();
+    //   if (res.success) {
+    //     toast.success("OTP Sent Successfully", { id: toastId });
+    //   }
+    //   setConfirmed(true);
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
@@ -86,12 +91,22 @@ export default function Verify() {
     }
   };
 
-  useEffect(() => {
-    if (!email) {
-      navigate("/");
-    }
-  }, [email, navigate]);
+  // Turned off for Development
+  // useEffect(() => {
+  //   if (!email) {
+  //     navigate("/");
+  //   }
+  // }, [email, navigate]);
 
+
+
+  useEffect(()=>{
+    const timerId = setInterval(() => {
+      if(email && confirmed){
+        setTimer((prev) => prev - 1);
+      }
+    }, 1000);
+  }, [email, confirmed]);
 
 
   return (
@@ -140,6 +155,10 @@ export default function Verify() {
                           </InputOTPGroup>
                         </InputOTP>
                       </FormControl>
+                      <FormDescription>
+                        <Button variant="link">Resend OTP</Button>
+                        {timer} sec
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
