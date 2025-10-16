@@ -45,7 +45,7 @@ export default function Verify() {
 
 
 
-  
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -74,6 +74,8 @@ export default function Verify() {
     };
 
     try {
+      // It is not tested because of -> Unexpected Application Error! in 37.3 Modules
+
       const res = await verifyOtp(userInfo).unwrap();
       if (res.success) {
         toast.success("OTP Verified", { id: toastId });
