@@ -19,7 +19,7 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { useSendOtpMutation } from "@/redux/features/auth.api";
+import { useSendOtpMutation, useVerifyOtpMutation } from "@/redux/features/auth.api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dot } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -41,7 +41,11 @@ export default function Verify() {
   const [email] = useState(location.state);
   const [confirmed, setConfirmed] = useState(false);
   const [sendOtp] = useSendOtpMutation();
+  const [verifyOtp] = useVerifyOtpMutation();
 
+
+
+  
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -49,11 +53,12 @@ export default function Verify() {
     },
   });
 
-  const handleConfirm = () => {
+  const handleConfirm = async() => {
+    const toastId = toast.loading("Sending OTP...");
     try {
       const res = await sendOtp({ email: email }).unwrap();
       if(res.success){
-        toast.success("OTP Sent Successfully")
+        toast.success("OTP Sent Successfully", {id: toastId})
       }
       setConfirmed(true);
     } catch (error) {
@@ -61,8 +66,22 @@ export default function Verify() {
     }
   };
 
-  const onSubmit = (data: z.infer<typeof FormSchema>) => {
-    console.log(data);
+  const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    const toastId = toast.loading("Verifying OTP");
+    const userInfo = {
+      email,
+      otp: data.pin,
+    };
+
+    try {
+      const res = await verifyOtp(userInfo).unwrap();
+      if (res.success) {
+        toast.success("OTP Verified", { id: toastId });
+        setConfirmed(true);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   useEffect(() => {
@@ -70,6 +89,8 @@ export default function Verify() {
       navigate("/");
     }
   }, [email, navigate]);
+
+
 
   return (
     <div className="grid place-content-center h-screen">
