@@ -21,6 +21,7 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import { cn } from "@/lib/utils";
 import {
   useSendOtpMutation,
   useVerifyOtpMutation,
@@ -42,12 +43,12 @@ const FormSchema = z.object({
 export default function Verify() {
   const location = useLocation();
   const navigate = useNavigate();
-  console.log("location.state : ", location.state);
+  // console.log("location.state : ", location.state);
   const [email] = useState(location.state);
   const [confirmed, setConfirmed] = useState(false);
   const [sendOtp] = useSendOtpMutation();
   const [verifyOtp] = useVerifyOtpMutation();
-    const [timer, setTimer] = useState(120);
+  const [timer, setTimer] = useState(5);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -56,20 +57,21 @@ export default function Verify() {
     },
   });
 
-  const handleConfirm = async () => {
-    // const toastId = toast.loading("Sending OTP...");
-    setConfirmed(true);
+  const handleSentOtp = async () => {
+    const toastId = toast.loading("Sending OTP...");
 
-    // try {
-    //   // Error is solved : https://discord.com/channels/1369380056341942363/1428250082679193670/1428276581872304148
-    //   const res = await sendOtp({ email: email }).unwrap();
-    //   if (res.success) {
-    //     toast.success("OTP Sent Successfully", { id: toastId });
-    //   }
-    //   setConfirmed(true);
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    try {
+      // Error is solved : https://discord.com/channels/1369380056341942363/1428250082679193670/1428276581872304148
+      const res = await sendOtp({ email: email }).unwrap();
+      if (res.success) {
+        toast.success("OTP Sent Successfully", { id: toastId });
+        setConfirmed(true);
+        setTimer(5);
+      }
+      setConfirmed(true);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
@@ -99,16 +101,18 @@ export default function Verify() {
   //   }
   // }, [email, navigate]);
 
+  useEffect(() => {
+    if (!email || !confirmed) {
+      return;
+    }
 
-
-  useEffect(()=>{
     const timerId = setInterval(() => {
-      if(email && confirmed){
-        setTimer((prev) => prev - 1);
-      }
+      setTimer((prev) => (prev > 0 ? prev - 1 : 0));
+      console.log("Tick");
     }, 1000);
-  }, [email, confirmed]);
 
+    return () => clearInterval(timerId);
+  }, [email, confirmed]);
 
   return (
     <div className="grid place-content-center h-screen">
@@ -157,7 +161,18 @@ export default function Verify() {
                         </InputOTP>
                       </FormControl>
                       <FormDescription>
-                        <Button variant="link">Resend OTP</Button>
+                        <Button
+                          type="button"
+                          variant="link"
+                          onClick={handleSentOtp}
+                          disabled={timer !== 0}
+                          className={cn("p-0 m-0", {
+                            "cursor-pointer": timer === 0,
+                            "text-gray-500": timer !== 0,
+                          })}
+                        >
+                          Resend OTP :
+                        </Button>
                         {timer} sec
                       </FormDescription>
                       <FormMessage />
@@ -185,7 +200,7 @@ export default function Verify() {
 
           <CardFooter className="flex justify-end">
             <Button
-              onClick={handleConfirm}
+              onClick={handleSentOtp}
               className="w-[300px]"
               form="otp-form"
               type="submit"
