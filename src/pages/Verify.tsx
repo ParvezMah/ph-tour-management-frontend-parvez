@@ -61,6 +61,7 @@ export default function Verify() {
     setConfirmed(true);
 
     // try {
+    //   // Error is solved : https://discord.com/channels/1369380056341942363/1428250082679193670/1428276581872304148
     //   const res = await sendOtp({ email: email }).unwrap();
     //   if (res.success) {
     //     toast.success("OTP Sent Successfully", { id: toastId });
