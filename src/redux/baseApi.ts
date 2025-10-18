@@ -12,5 +12,6 @@ export const baseApi = createApi({
 
         // if your company uses axios
     baseQuery: axiosBaseQuery(),
+    tagTypes: ['USER'],
     endpoints: ()=>({}),
 })
